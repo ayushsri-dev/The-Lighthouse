@@ -1,5 +1,7 @@
 // DOM Elements
 const nav = document.getElementById("nav");
+const cuisineDropdown = document.getElementById("cuisine-filter");
+const menuSearch = document.getElementById("menu-search");
 const navToggle = document.getElementById("navToggle");
 const navMenu = document.getElementById("navMenu");
 const navLinks = document.querySelectorAll(".nav-link");
@@ -11,6 +13,8 @@ const reservationForm = document.getElementById("reservationForm");
 const dateInput = document.getElementById("date");
 const timeSelect = document.getElementById("time");
 const themeToggle = document.getElementById("themeToggle");
+const filterBtns = document.querySelectorAll(".filter-btn");
+const menuContent = document.querySelector(".menu-content");
 if (dateInput) {
   const today = new Date().toISOString().split("T")[0];
   dateInput.setAttribute("min", today);
@@ -174,58 +178,70 @@ themeToggle.addEventListener("click", () => {
 
 // ── Menu Search and Filter ─────────────────────────
 
-const filterBtns = document.querySelectorAll(".filter-btn");
 
-const menuSearch = document.getElementById("menu-search");
 
-function filterMenuItems(filter = "all", searchText = "") {
+function filterMenuItems(timeFilter, cuisineFilter, searchText) {
   const menuItems = document.querySelectorAll(".menu-item");
-
   let visibleCount = 0;
 
   menuItems.forEach((item) => {
-    const itemName = item.querySelector("h3").textContent.toLowerCase();
+    // Check if the item has an H3 before trying to read it
+    const titleElement = item.querySelector("h3");
+    if (!titleElement) return; // Skip this loop iteration if structure is invalid
 
-    const category = item.dataset.category;
+    const itemName = titleElement.textContent.toLowerCase();
+    const timeCategory = item.dataset.category || "all"; 
+    const cuisineCategory = item.dataset.cuisine || "all";
 
     const matchesSearch = itemName.includes(searchText.toLowerCase());
+    const matchesTime = timeFilter === "all" || timeCategory === timeFilter;
+    const matchesCuisine = cuisineFilter === "all" || cuisineCategory === cuisineFilter;
 
-    const matchesFilter = filter === "all" || category === filter;
-
-    if (matchesSearch && matchesFilter) {
+    if (matchesSearch && matchesTime && matchesCuisine) {
       item.classList.remove("hidden-item");
-
       visibleCount++;
     } else {
       item.classList.add("hidden-item");
     }
   });
 
+  // Handle "No Results" display
   let noResults = document.querySelector(".no-results");
-
-  if (!visibleCount) {
+  if (visibleCount === 0) {
     if (!noResults) {
       noResults = document.createElement("p");
-
       noResults.className = "no-results";
-
       noResults.textContent = "No menu items found.";
-
       document.querySelector(".menu-content").appendChild(noResults);
     }
   } else if (noResults) {
     noResults.remove();
   }
 }
+function triggerFilter() {
+  const activeBtn = document.querySelector(".filter-btn.active");
+  const timeFilter = activeBtn ? activeBtn.dataset.filter : "all";
+  const cuisineFilter = cuisineDropdown ? cuisineDropdown.value : "all";
+  const searchText = menuSearch ? menuSearch.value : "";
+  
+  filterMenuItems(timeFilter, cuisineFilter, searchText);
+}
+if (cuisineDropdown) {
+  cuisineDropdown.addEventListener("change", triggerFilter);
+}
 
+if (menuSearch) {
+  menuSearch.addEventListener("input", triggerFilter);
+}
 // Filter buttons
 filterBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     filterBtns.forEach((b) => b.classList.remove("active"));
 
     btn.classList.add("active");
+    triggerFilter();
 
-    filterMenuItems(btn.dataset.filter, menuSearch.value);
+    
   });
 });
 
@@ -236,6 +252,7 @@ menuSearch.addEventListener("input", () => {
 
   filterMenuItems(activeFilter, menuSearch.value);
 });
+
 
 // Smooth scroll for navigation links
 function smoothScroll(e) {

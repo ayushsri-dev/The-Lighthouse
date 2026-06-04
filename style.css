@@ -1326,3 +1326,16 @@ body.light-theme .nav-cta:hover {
   opacity: 1;
   visibility: visible;
 }
+.search-and-filter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.cuisine-dropdown {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: var(--bg-color);
+  color: goldenrod;
+}

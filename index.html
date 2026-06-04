@@ -137,7 +137,14 @@
             placeholder="Search dishes..."
             class="menu-search"
           />
-
+          <select id="cuisine-filter" class="cuisine-dropdown">
+      <option value="all">All Cuisines</option>
+      <option value="south-indian">South Indian</option>
+      <option value="indo-chinese">Indo-Chinese</option>
+      <option value="core-menu">Core Menu</option>
+      <option value="regional-variation">Regional Variation</option>
+    </select>
+  
           <div class="menu-filters">
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="breakfast">
@@ -153,7 +160,7 @@
         <!-- Menu Content -->
         <div class="menu-content">
           <!-- breakfast -->
-          <div class="menu-item" data-category="breakfast">
+          <div class="menu-item" data-category="breakfast" data-cuisine="south-indian">
             <div class="food-card">
               <img
                 src="./images/MasalaDosa.jpg"
@@ -173,7 +180,8 @@
               </div>
             </div>
           </div>
-          <div class="menu-item" data-category="breakfast">
+          </div>
+          <div class="menu-item" data-category="breakfast" data-cuisine="south-indian">
             <div class="food-card">
               <img
                 src="./images/Idli_Sambar.jpg"
@@ -194,9 +202,9 @@
                 </p>
               </div>
             </div>
-          </div>
+          </div></div>
 
-          <div class="menu-item" data-category="breakfast">
+          <div class="menu-item" data-category="breakfast" data-cuisine="regional-variation">
             <div class="food-card">
               <img
                 src="./images/Chicken_Keema_Dosa.jpg"
@@ -216,9 +224,10 @@
               </div>
             </div>
           </div>
+          </div>
 
           <!-- lunch -->
-          <div class="menu-item" data-category="lunch">
+          <div class="menu-item" data-category="lunch" data-cuisine="regional-variation">
             <div class="food-card">
               <img
                 src="./images/Paneer_Butter_Masala.jpg"
@@ -238,9 +247,10 @@
               </div>
             </div>
           </div>
+          </div>
 
           <!-- dinner -->
-          <div class="menu-item" data-category="dinner">
+          <div class="menu-item" data-category="dinner" data-cuisine="core-menu">
             <div class="food-card">
               <img
                 src="./images/Hyderabadi_Chicken_Biryani.jpg"
@@ -263,8 +273,9 @@
               </div>
             </div>
           </div>
+          </div>
 
-          <div class="menu-item" data-category="dinner">
+          <div class="menu-item" data-category="dinner" data-cuisine="core-menu">
             <div class="food-card">
               <img
                 src="./images/Butter_Chicken.jpg"
@@ -283,6 +294,7 @@
                 <p>Creamy tomato-based chicken curry with naan</p>
               </div>
             </div>
+          </div>
           </div>
 
           <!-- Drinks -->
