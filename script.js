@@ -1,16 +1,21 @@
-// ── Device detection (used by FIX #9 and FIX #14) ───
+// =============================================
+// DOM ELEMENTS
+// =============================================
+const nav = document.getElementById("nav");
+const cuisineDropdown = document.getElementById("cuisine-filter");
+const menuSearch = document.getElementById("menu-search");
+const navToggle = document.getElementById("navToggle");
+const navMenu = document.getElementById("navMenu");
+const navLinks = document.querySelectorAll(".nav-link");
+const heroBg = document.getElementById("heroBg");
+const reservationBg = document.getElementById("reservationBg");
+const reservationForm = document.getElementById("reservationForm");
+const dateInput = document.getElementById("reservation-date");
+const timeSelect = document.getElementById("time");
+const themeToggle = document.getElementById("themeToggle");
+
+// ── Device detection ───
 const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-//DOM ELEMENT
-const nav            = document.getElementById('nav');
-const navToggle      = document.getElementById('navToggle');
-const navMenu        = document.getElementById('navMenu');
-const navLinks       = document.querySelectorAll('.nav-link');
-const heroBg         = document.getElementById('heroBg');
-const reservationBg  = document.getElementById('reservationBg');
-const reservationForm= document.getElementById('reservationForm');
-const dateInput      = document.getElementById('date');
-const timeSelect     = document.getElementById('time');
-const themeToggle    = document.getElementById('themeToggle');
 
 // ── FIX #9 — show correct scroll hint based on input type ────────
 const scrollHintMouse = document.querySelector('.scroll-hint-mouse');
@@ -24,7 +29,7 @@ if (scrollHintMouse && scrollHintTouch) {
 // ── FIX #13 — Date validation: min = tomorrow, max = 90 days out ─────
 if (dateInput) {
   const tomorrow = new Date(Date.now() + 86400000);
-  const maxDate  = new Date(Date.now() + 90 * 86400000);
+  const maxDate = new Date(Date.now() + 90 * 86400000);
 
   dateInput.setAttribute('min', tomorrow.toISOString().split('T')[0]);
   dateInput.setAttribute('max', maxDate.toISOString().split('T')[0]);
@@ -32,16 +37,15 @@ if (dateInput) {
   dateInput.addEventListener('change', updateAvailableTimes);
 }
 
-// ── FIX #11 — Disable past time slots when today is selected.
-// Original had no handler for this — users could pick 7AM at 10PM.
+// ── FIX #11 — Disable past time slots when today is selected ─────
 function updateAvailableTimes() {
   if (!dateInput || !timeSelect) return;
 
   const selectedDate = dateInput.value;
-  const todayStr     = new Date().toISOString().split('T')[0];
-  const now          = new Date();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const now = new Date();
   const currentHours = now.getHours();
-  const currentMins  = now.getMinutes();
+  const currentMins = now.getMinutes();
 
   timeSelect.querySelectorAll('option').forEach((option) => {
     if (!option.value) return;
@@ -49,7 +53,6 @@ function updateAvailableTimes() {
     const [optHours, optMins] = option.value.split(':').map(Number);
 
     if (selectedDate === todayStr) {
-      // Disable times already passed (30-min buffer for travel/prep)
       const isPast =
         optHours < currentHours ||
         (optHours === currentHours && optMins <= currentMins + 30);
@@ -64,33 +67,16 @@ function updateAvailableTimes() {
   });
 }
 
-// ── Theme Toggle ──
-const savedTheme = localStorage.getItem('theme');
 
-if (savedTheme === 'light') {
-  document.body.classList.add('light-theme');
-  themeToggle.textContent = '☀️';
-} else {
-  themeToggle.textContent = '🌙';
-}
-
-themeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('light-theme');
-  const isLight = document.body.classList.contains('light-theme');
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
-  themeToggle.textContent = isLight ? '☀️' : '🌙';
-});
 
 // ── Navigation scroll effect ──
 function handleScroll() {
-  const currentScroll = window.pageYOffset;
+  const currentScroll = window.scrollY;
 
   // Sticky nav background
   nav.classList.toggle('scrolled', currentScroll > 50);
 
-  // FIX #14 — Parallax completely skipped on touch/iOS
-  // background-attachment:fixed doesn't work on iOS Safari and the JS
-  // translateY parallax causes severe jank on touch devices.
+  // Parallax skipped on touch devices
   if (!isTouchDevice) {
     if (heroBg) {
       heroBg.style.transform = `translateY(${currentScroll * 0.5}px)`;
@@ -107,13 +93,13 @@ function handleScroll() {
 
 // ── Active nav link on scroll ───
 function updateActiveNavLink() {
-  const sections       = document.querySelectorAll('section[id]');
-  const scrollPosition = window.pageYOffset + 150;
+  const sections = document.querySelectorAll('section[id]');
+  const scrollPosition = window.scrollY + 150;
 
   sections.forEach((section) => {
-    const sectionTop    = section.offsetTop;
+    const sectionTop = section.offsetTop;
     const sectionHeight = section.offsetHeight;
-    const sectionId     = section.getAttribute('id');
+    const sectionId = section.getAttribute('id');
 
     if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
       navLinks.forEach((link) => {
@@ -139,17 +125,61 @@ function closeMobileMenu() {
   document.body.style.overflow = '';
 }
 
-// ── Menu search & filter ────
-const filterBtns = document.querySelectorAll('.filter-btn');
-const menuSearch = document.getElementById('menu-search');
+// Menu tabs functionality
+function switchMenuTab(e) {
+  const targetTab = e.target.dataset.tab;
 
-function filterMenuItems(filter = 'all', searchText = '') {
-  const menuItems = document.querySelectorAll('.menu-item');
+  // Update tab buttons
+  menuTabs.forEach((tab) => {
+    tab.classList.remove("active");
+  });
+  e.target.classList.add("active");
+
+  // Update panels
+  menuPanels.forEach((panel) => {
+    panel.classList.remove("active");
+    if (panel.id === targetTab) {
+      panel.classList.add("active");
+    }
+  });
+}
+
+//
+// Theme Toggle
+const savedTheme = localStorage.getItem("theme");
+
+if (savedTheme === "light") {
+  document.body.classList.add("light-theme");
+  themeToggle.textContent = "☀️";
+} else {
+  themeToggle.textContent = "🌙";
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("light-theme");
+
+  const isLight = document.body.classList.contains("light-theme");
+
+  if (isLight) {
+    localStorage.setItem("theme", "light");
+    themeToggle.textContent = "☀️";
+  } else {
+    localStorage.setItem("theme", "dark");
+    themeToggle.textContent = "🌙";
+  }
+});
+
+// ── Menu Search and Filter ─────────────────────────
+
+
+
+function filterMenuItems(timeFilter, cuisineFilter, searchText) {
+  const menuItems = document.querySelectorAll(".menu-item");
   let visibleCount = 0;
 
   menuItems.forEach((item) => {
-    const itemName      = item.querySelector('h3').textContent.toLowerCase();
-    const category      = item.dataset.category;
+    const itemName = item.querySelector('h3')?.textContent?.toLowerCase() || '';
+    const category = item.dataset.category;
     const matchesSearch = itemName.includes(searchText.toLowerCase());
     const matchesFilter = filter === 'all' || category === filter;
 
@@ -161,42 +191,62 @@ function filterMenuItems(filter = 'all', searchText = '') {
     }
   });
 
-  let noResults = document.querySelector('.no-results');
-  if (!visibleCount) {
+  // Handle "No Results" display
+  let noResults = document.querySelector(".no-results");
+  if (visibleCount === 0) {
     if (!noResults) {
       noResults = document.createElement('p');
       noResults.className = 'no-results';
       noResults.textContent = 'No menu items found.';
-      document.querySelector('.menu-content').appendChild(noResults);
+      document.querySelector('.menu-content')?.appendChild(noResults);
     }
   } else if (noResults) {
     noResults.remove();
   }
 }
+function triggerFilter() {
+  const activeBtn = document.querySelector(".filter-btn.active");
+  const timeFilter = activeBtn ? activeBtn.dataset.filter : "all";
+  const cuisineFilter = cuisineDropdown ? cuisineDropdown.value : "all";
+  const searchText = menuSearch ? menuSearch.value : "";
+  
+  filterMenuItems(timeFilter, cuisineFilter, searchText);
+}
+if (cuisineDropdown) {
+  cuisineDropdown.addEventListener("change", triggerFilter);
+}
 
+if (menuSearch) {
+  menuSearch.addEventListener("input", triggerFilter);
+}
+// Filter buttons
 filterBtns.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach((b) => b.classList.remove('active'));
-    btn.classList.add('active');
-    filterMenuItems(btn.dataset.filter, menuSearch ? menuSearch.value : '');
+  btn.addEventListener("click", () => {
+    filterBtns.forEach((b) => b.classList.remove("active"));
+
+    btn.classList.add("active");
+    triggerFilter();
+
+    
   });
 });
 
 if (menuSearch) {
   menuSearch.addEventListener('input', () => {
-    const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+    const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
     filterMenuItems(activeFilter, menuSearch.value);
   });
 }
 
-// ── Smooth scroll ──
+ 
+
+// Smooth scroll for navigation links
 function smoothScroll(e) {
   e.preventDefault();
-  const targetId      = this.getAttribute('href');
+  const targetId = this.getAttribute('href');
   const targetSection = document.querySelector(targetId);
 
   if (targetSection) {
-    // FIX #15 partial — respect reduced motion in smooth scroll too
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({
       top: targetSection.offsetTop - 80,
@@ -205,13 +255,13 @@ function smoothScroll(e) {
   }
   closeMobileMenu();
 }
-
+}
 // ── Reservation form submission ──
 function handleFormSubmit(e) {
   e.preventDefault();
 
-  const inputs  = reservationForm.querySelectorAll('input, select, textarea');
-  let isValid   = true;
+  const inputs = reservationForm.querySelectorAll('input, select, textarea');
+  let isValid = true;
 
   inputs.forEach((input) => {
     if (input.required && !input.value) {
@@ -222,8 +272,40 @@ function handleFormSubmit(e) {
     }
   });
 
+  const emailInput = document.getElementById('email');
+  const phoneInput = document.getElementById('phone');
+
+  // Remove old error messages
+  document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (emailInput && !emailRegex.test(emailInput.value.trim())) {
+    emailInput.style.borderColor = '#c94a4a';
+    const emailError = document.createElement('small');
+    emailError.className = 'error-message';
+    emailError.style.color = '#c94a4a';
+    emailError.textContent = 'Please enter a valid email address.';
+    emailInput.parentElement.appendChild(emailError);
+    isValid = false;
+  }
+
+  // Phone validation
+  if (phoneInput) {
+    const phoneValue = phoneInput.value.replace(/\D/g, '');
+    if (phoneValue.length !== 10) {
+      phoneInput.style.borderColor = '#c94a4a';
+      const phoneError = document.createElement('small');
+      phoneError.className = 'error-message';
+      phoneError.style.color = '#c94a4a';
+      phoneError.textContent = 'Phone number must contain exactly 10 digits.';
+      phoneInput.parentElement.appendChild(phoneError);
+      isValid = false;
+    }
+  }
+
   if (isValid) {
-    const submitBtn  = reservationForm.querySelector('button[type="submit"]');
+    const submitBtn = reservationForm.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Reservation Requested!';
     submitBtn.style.backgroundColor = '#4a9c6a';
@@ -235,13 +317,12 @@ function handleFormSubmit(e) {
       submitBtn.textContent = originalText;
       submitBtn.style.backgroundColor = '';
       submitBtn.disabled = false;
-      // Re-run time filter after form reset in case date was today
       updateAvailableTimes();
     }, 3000);
   }
 }
 
-// ── FIX #15 — Intersection Observer with prefers-reduced-motion ──────
+// ── Intersection Observer with prefers-reduced-motion ──────
 function setupIntersectionObserver() {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -250,7 +331,6 @@ function setupIntersectionObserver() {
   );
 
   if (prefersReduced) {
-    // Skip animation entirely — just show everything immediately
     animatedElements.forEach((el) => {
       el.style.opacity = '1';
       el.style.transform = 'none';
@@ -317,7 +397,6 @@ if (heroScroll) {
 const backToTopBtn = document.getElementById('backToTop');
 
 if (backToTopBtn) {
-  // Two scroll listeners in original were duplicated — merged into one
   window.addEventListener('scroll', () => {
     const past = window.scrollY > 300;
     backToTopBtn.style.display = past ? 'block' : 'none';
@@ -325,7 +404,6 @@ if (backToTopBtn) {
   });
 
   backToTopBtn.addEventListener('click', () => {
-    // FIX #15 partial — respect reduced motion on back-to-top too
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
   });
@@ -375,7 +453,7 @@ function renderReviews() {
   if (!grid) return;
 
   const userReviews = getReviews();
-  const allReviews  = [pinnedReview, ...userReviews];
+  const allReviews = [pinnedReview, ...userReviews];
 
   grid.innerHTML = allReviews
     .map(
@@ -427,13 +505,13 @@ function isValidName(name) {
 }
 
 const reviewForm = document.getElementById('review-form');
-const reviewMsg  = document.getElementById('review-msg');
+const reviewMsg = document.getElementById('review-msg');
 
 if (reviewForm) {
   reviewForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const name       = document.getElementById('review-name').value.trim();
+    const name = document.getElementById('review-name').value.trim();
     const reviewText = document.getElementById('review-text').value.trim();
 
     reviewMsg.style.display = 'block';
@@ -460,11 +538,19 @@ if (reviewForm) {
     }
 
     const dateStr = new Date().toLocaleDateString('en-IN', {
-      day: '2-digit', month: 'short', year: 'numeric',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
     });
 
-    const newReview = { id: Date.now(), name, rating: selectedRating, text: reviewText, date: dateStr };
-    const reviews   = getReviews();
+    const newReview = {
+      id: Date.now(),
+      name,
+      rating: selectedRating,
+      text: reviewText,
+      date: dateStr,
+    };
+    const reviews = getReviews();
     reviews.unshift(newReview);
     saveReviews(reviews);
     renderReviews();
@@ -476,64 +562,107 @@ if (reviewForm) {
 
     reviewMsg.textContent = 'Review submitted successfully!';
     reviewMsg.style.color = '#4a9c6a';
-    setTimeout(() => { reviewMsg.style.display = 'none'; }, 3000);
+    setTimeout(() => {
+      reviewMsg.style.display = 'none';
+    }, 3000);
   });
 }
 
-// ── Initialise ───
-document.addEventListener('DOMContentLoaded', () => {
-  handleScroll();
-  setupIntersectionObserver();
-  updateAvailableTimes();
-  renderReviews();
-});
-
 // ── Veg / Non-Veg Filter ──────────────────────────────
+// 1. Your filtering function, contained properly
 (function () {
-  const filterBtns = document.querySelectorAll('.diet-btn');
-  if (!filterBtns.length) return;
+  const dietFilterBtns = document.querySelectorAll('.diet-btn');
+  if (!dietFilterBtns.length) return;
 
   function applyDietFilter(diet) {
-    // Filter within whichever panel is currently active
     const activePanels = document.querySelectorAll('.menu-panel.active');
 
-    activePanels.forEach(panel => {
+    activePanels.forEach((panel) => {
       const items = panel.querySelectorAll('.menu-item');
       let visibleCount = 0;
 
-      items.forEach(item => {
+      items.forEach((item) => {
         const itemDiet = item.dataset.diet || 'all';
         const show = diet === 'all' || itemDiet === diet;
         item.classList.toggle('diet-hidden', !show);
         if (show) visibleCount++;
       });
 
-      // Show/hide no-results message
       let noResults = panel.querySelector('.diet-no-results');
       if (!noResults) {
         noResults = document.createElement('p');
         noResults.className = 'diet-no-results';
         noResults.textContent = 'No items match the selected filter.';
-        panel.querySelector('.menu-items').appendChild(noResults);
+        const menuItems = panel.querySelector('.menu-items');
+        if (menuItems) {
+          menuItems.appendChild(noResults);
+        }
       }
       noResults.classList.toggle('visible', visibleCount === 0);
     });
   }
 
-  filterBtns.forEach(btn => {
+  dietFilterBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
+      dietFilterBtns.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       applyDietFilter(btn.dataset.diet);
     });
   });
 
-  // Re-apply filter when menu tab changes
-  document.querySelectorAll('.menu-tab').forEach(tab => {
+  document.querySelectorAll('.menu-tab').forEach((tab) => {
     tab.addEventListener('click', () => {
       const activeDiet = document.querySelector('.diet-btn.active')?.dataset.diet || 'all';
-      // slight delay to let the panel become active
       setTimeout(() => applyDietFilter(activeDiet), 50);
     });
   });
 })();
+
+// =============================================
+// 3D CARD FLIP ENHANCEMENTS
+// =============================================
+
+function handleCardFlip() {
+  const cards = document.querySelectorAll('.food-card-3d');
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+  if (isTouch) {
+    cards.forEach((card) => {
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('a') || e.target.closest('button')) return;
+        this.classList.toggle('flipped');
+      });
+    });
+  }
+}
+
+// Reset mobile flip when clicking elsewhere
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('.food-card-3d')) {
+    document.querySelectorAll('.food-card-3d.flipped').forEach((card) => {
+      card.classList.remove('flipped');
+    });
+  }
+});
+
+// ── Initialise ───
+document.addEventListener('DOMContentLoaded', function () {
+  handleScroll();
+  setupIntersectionObserver();
+  updateAvailableTimes();
+  renderReviews();
+  handleCardFlip();
+});
+
+// Mobile flip style
+const styleForMobile = `
+  @media (max-width: 768px) {
+    .food-card-3d.flipped .food-card-inner {
+      transform: rotateY(180deg) scale(1.01);
+    }
+  }
+`;
+
+const mobileStyle = document.createElement('style');
+mobileStyle.textContent = styleForMobile;
+document.head.appendChild(mobileStyle);

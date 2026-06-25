@@ -99,22 +99,18 @@ h4 {
   text-transform: uppercase;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all var(--transition);
-}
 
-.btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-bg);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-dark);
-}
-
-.btn-outline {
-  background-color: transparent;
-  border-color: var(--color-text);
-  color: var(--color-text);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
 }
 
 body.light-theme .hero .btn-outline {
@@ -128,9 +124,8 @@ body.light-theme .hero .btn-outline:hover {
   color: #ffffff;
 }
 
-/* Improve reservation section readability in light mode */
-
 body.light-theme .reservation .section-title,
+body.light-theme .reservation .reservation-info,
 body.light-theme .reservation .reservation-info p,
 body.light-theme .reservation .detail-item strong,
 body.light-theme .reservation .detail-item span {
@@ -140,6 +135,8 @@ body.light-theme .reservation .detail-item span {
 .btn-outline:hover {
   background-color: var(--color-text);
   color: var(--color-bg);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
 }
 
 .btn-full {
@@ -803,8 +800,92 @@ body.light-theme .btn-outline:hover {
   flex: 1;
 }
 
-.food-content p {
-  margin-top: 10px;
+.specials {
+  padding: 100px 0;
+  background-color: var(--color-bg);
+}
+
+.specials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Dark Mode (default) */
+.special-card {
+  background: #000;
+  color: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.special-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+.special-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.special-content {
+  padding: 1.5rem;
+}
+
+.special-content h3 {
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.special-content p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+}
+
+.special-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #d4a017;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.price {
+  display: block;
+  margin-top: 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* Light Theme */
+body.light-theme .special-card {
+  background: #fff;
+  color: #1a1714;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .special-content h3 {
+  color: #1a1714;
+}
+
+body.light-theme .special-content p {
+  color: #5f5b55;
+}
+
+body.light-theme .price {
+  color: #1a1714;
 }
 
 /* Reservation Section */
@@ -1215,7 +1296,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   color: var(--color-primary);
   transform: scale(1.1);
 }
-
+}
 @media (max-width: 1024px) {
   .reviews-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1230,17 +1311,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     padding: 24px 20px;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /* Footer */
 
@@ -1513,8 +1583,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   }
 }
 
-
-
 /* Responsive Design */
 @media (max-width: 1024px) {
   .about-grid,
@@ -1704,6 +1772,36 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
   visibility: visible;
 }
+/* Mobile menu card fix */
+@media (max-width: 768px) {
+  .food-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .food-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+  .food-content {
+    width: 100%;
+  }
+
+  .menu-item-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #backToTop {
+    right: 16px;
+    bottom: 16px;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}
 
 /* =============================================
    Veg / Non-Veg Diet Filter
@@ -1771,4 +1869,334 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .diet-no-results.visible {
   display: block;
+}
+/* =============================================
+   3D CARD FLIP WITH POLAROID STYLE
+   ============================================= */
+
+/* Container for the entire flip card */
+.menu-item {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.food-card-3d {
+  perspective: 1500px;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+
+.food-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+}
+
+/* Flip on hover */
+.food-card-3d:hover .food-card-inner {
+  transform: rotateY(180deg) scale(1.02);
+}
+
+/* Front and Back faces */
+.food-card-front,
+.food-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Front Face - Polaroid Style */
+.food-card-front {
+  transform: rotateY(0deg);
+  transition: transform 0.3s ease;
+}
+
+.polaroid {
+  background: var(--color-bg-card);
+  border-radius: 12px;
+  padding: 16px 16px 20px 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid var(--color-border);
+  height: 100%;
+}
+
+/* Rotation on hover - gives that polaroid tilt effect */
+.food-card-3d:hover .polaroid {
+  transform: rotate(-2deg) scale(0.98);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Alternate rotation direction for even cards */
+.menu-item:nth-child(even) .food-card-3d:hover .polaroid {
+  transform: rotate(2deg) scale(0.98);
+}
+
+/* Polaroid Image Wrapper */
+.polaroid-image-wrapper {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.polaroid-image-wrapper img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.polaroid-image-wrapper:hover img {
+  transform: scale(1.08);
+}
+
+/* Decorative Tape on Polaroid */
+.polaroid-tape {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 60px;
+  height: 30px;
+  background: rgba(255, 200, 100, 0.6);
+  clip-path: polygon(10% 0%, 90% 0%, 85% 100%, 15% 100%);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item:nth-child(even) .polaroid-tape {
+  transform: translateX(-50%) rotate(3deg);
+}
+
+.food-card-3d:hover .polaroid-tape {
+  opacity: 0.9;
+  transform: translateX(-50%) rotate(0deg) scale(1.1);
+}
+
+/* Badges on Polaroid */
+.polaroid-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+
+.polaroid-badge.popular {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+}
+
+.polaroid-badge.classic {
+  background: linear-gradient(135deg, #f9ca24, #f0932b);
+  color: white;
+}
+
+.polaroid-badge.chef {
+  background: linear-gradient(135deg, #6ab04c, #218c53);
+  color: white;
+}
+
+.polaroid-badge.signature {
+  background: linear-gradient(135deg, #c9a962, #a88b4a);
+  color: white;
+}
+
+.polaroid-badge.refreshing {
+  background: linear-gradient(135deg, #22a6b3, #1b7b86);
+  color: white;
+}
+
+/* Polaroid Caption */
+.polaroid-caption {
+  padding: 8px 4px 4px 4px;
+}
+
+.polaroid-caption h3 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+  color: var(--color-text);
+}
+
+.polaroid-price {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* ===== BACK FACE STYLES ===== */
+.food-card-back {
+  transform: rotateY(180deg);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.back-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.back-content h4 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.back-content p {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.back-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.back-details span {
+  background: var(--color-bg);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.back-ingredients {
+  margin-top: 4px;
+}
+
+.back-ingredients strong {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.back-ingredients span {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.back-allergens {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.back-allergens span {
+  font-size: 0.8rem;
+  color: #ff6b6b;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .food-card-inner {
+    min-height: 300px;
+  }
+  
+  .food-card-front,
+  .food-card-back {
+    min-height: 300px;
+  }
+  
+  .polaroid-image-wrapper img {
+    height: 160px;
+  }
+  
+  .food-card-3d:hover .food-card-inner {
+    transform: rotateY(180deg) scale(1.01);
+  }
+  
+  .back-content p {
+    font-size: 0.8rem;
+  }
+  
+  .back-details span {
+    font-size: 0.7rem;
+    padding: 2px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .polaroid {
+    padding: 12px 12px 16px 12px;
+  }
+  
+  .polaroid-image-wrapper img {
+    height: 140px;
+  }
+  
+  .polaroid-caption h3 {
+    font-size: 1rem;
+  }
+  
+  .food-card-inner {
+    min-height: 280px;
+  }
+  
+  .food-card-front,
+  .food-card-back {
+    min-height: 280px;
+  }
+  
+  .back-content {
+    gap: 8px;
+  }
+  
+  .back-content h4 {
+    font-size: 1rem;
+  }
+}
+
+/* Dark/Light theme support */
+body.light-theme .polaroid {
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .food-card-back {
+  background: #ffffff;
+}
+
+body.light-theme .back-details span {
+  background: var(--color-bg-lighter);
+}
+
+body.light-theme .polaroid-tape {
+  background: rgba(255, 200, 100, 0.8);
 }
