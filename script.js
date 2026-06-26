@@ -181,7 +181,7 @@ function filterMenuItems(timeFilter, cuisineFilter, searchText) {
     const itemName = item.querySelector('h3')?.textContent?.toLowerCase() || '';
     const category = item.dataset.category;
     const matchesSearch = itemName.includes(searchText.toLowerCase());
-    const matchesFilter = filter === 'all' || category === filter;
+    const matchesFilter = timeFilter === 'all' || category === timeFilter;
 
     if (matchesSearch && matchesFilter) {
       item.classList.remove('hidden-item');
@@ -220,6 +220,7 @@ if (menuSearch) {
   menuSearch.addEventListener("input", triggerFilter);
 }
 // Filter buttons
+const filterBtns = document.querySelectorAll('.filter-btn');
 filterBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     filterBtns.forEach((b) => b.classList.remove("active"));
@@ -255,7 +256,7 @@ function smoothScroll(e) {
   }
   closeMobileMenu();
 }
-}
+
 // ── Reservation form submission ──
 function handleFormSubmit(e) {
   e.preventDefault();
@@ -645,6 +646,13 @@ document.addEventListener('click', function (e) {
   }
 });
 
+// ── Display total menu category count ──
+function displayCategoryCount() {
+  const categoryBtns = document.querySelectorAll('.filter-btn:not([data-filter="all"])');
+  const countEl = document.getElementById('menu-category-count');
+  if (countEl) countEl.textContent = categoryBtns.length + ' Menu Categories Available';
+}
+
 // ── Initialise ───
 document.addEventListener('DOMContentLoaded', function () {
   handleScroll();
@@ -652,6 +660,7 @@ document.addEventListener('DOMContentLoaded', function () {
   updateAvailableTimes();
   renderReviews();
   handleCardFlip();
+  displayCategoryCount();
 });
 
 // Mobile flip style
