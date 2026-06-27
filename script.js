@@ -660,6 +660,13 @@ function displayChefsRecommendation() {
   recommendation.textContent = randomItem.textContent;
 }
 
+// ── Display total menu category count ──
+function displayCategoryCount() {
+  const categoryBtns = document.querySelectorAll('.filter-btn:not([data-filter="all"])');
+  const countEl = document.getElementById('menu-category-count');
+  if (countEl) countEl.textContent = categoryBtns.length + ' Menu Categories Available';
+}
+
 // ── Initialise ───
 document.addEventListener('DOMContentLoaded', function () {
   handleScroll();
@@ -667,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function () {
   updateAvailableTimes();
   renderReviews();
   handleCardFlip();
-  displayChefsRecommendation();
+  displayCategoryCount();
 });
 
 // Mobile flip style
@@ -682,3 +689,10 @@ const styleForMobile = `
 const mobileStyle = document.createElement('style');
 mobileStyle.textContent = styleForMobile;
 document.head.appendChild(mobileStyle);
+
+// Automatically update copyright year
+const currentYear = document.getElementById("current-year");
+
+if (currentYear) {
+  currentYear.textContent = new Date().getFullYear();
+}

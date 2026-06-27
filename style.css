@@ -2200,12 +2200,12 @@ body.light-theme .back-details span {
 body.light-theme .polaroid-tape {
   background: rgba(255, 200, 100, 0.8);
 }
-.chef-recommendation {
-  margin-top: 20px;
-  font-size: 1rem;
-  color: #f5d67b;
-}
 
-.chef-recommendation strong {
-  color: #ffffff;
+/* ── Menu Category Count ── */
+#menu-category-count {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: var(--color-text-muted, #999);
+  margin-top: 0.4rem;
+  letter-spacing: 0.04em;
 }
