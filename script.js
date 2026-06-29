@@ -13,6 +13,20 @@ const dateInput      = document.getElementById('date');
 const timeSelect     = document.getElementById('time');
 const themeToggle    = document.getElementById('themeToggle');
 
+// ── EmailJS Configuration ──
+// Replace these with your actual EmailJS credentials
+const EMAILJS_CONFIG = {
+  publicKey:       'abc123XYZ',        // actual public key
+  serviceId:       'service_abc1234',  //  actual service ID
+  guestTemplateId: 'template_guest01', //  template ID
+  adminTemplateId: 'template_admin02', // template ID
+};
+
+// Initialise EmailJS as soon as the key is set
+if (EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
+  emailjs.init(EMAILJS_CONFIG.publicKey);
+}
+
 // ── FIX #9 — show correct scroll hint based on input type ────────
 const scrollHintMouse = document.querySelector('.scroll-hint-mouse');
 const scrollHintTouch = document.querySelector('.scroll-hint-touch');
@@ -240,8 +254,58 @@ function smoothScroll(e) {
   closeMobileMenu();
 }
 
-// ── Reservation form submission ──
-function handleFormSubmit(e) {
+// ── EmailJS helper: format date & time for readable email ──
+function formatBookingDate(dateStr) {
+  if (!dateStr) return dateStr;
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function formatBookingTime(timeStr) {
+  if (!timeStr) return timeStr;
+  const [h, m] = timeStr.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const hour12 = h % 12 || 12;
+  return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+}
+
+// ── Reservation toast notification ──
+function showReservationToast(type, message) {
+  // Remove any existing toast
+  const existing = document.querySelector('.reservation-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.className = `reservation-toast reservation-toast--${type}`;
+  toast.innerHTML = `
+    <div class="reservation-toast__icon">${type === 'success' ? '✓' : '✕'}</div>
+    <div class="reservation-toast__body">
+      <p class="reservation-toast__title">${type === 'success' ? 'Reservation Requested!' : 'Something went wrong'}</p>
+      <p class="reservation-toast__msg">${message}</p>
+    </div>
+    <button class="reservation-toast__close" aria-label="Close">✕</button>
+  `;
+
+  document.body.appendChild(toast);
+
+  // Animate in
+  requestAnimationFrame(() => toast.classList.add('reservation-toast--visible'));
+
+  // Close button
+  toast.querySelector('.reservation-toast__close').addEventListener('click', () => {
+    toast.classList.remove('reservation-toast--visible');
+    setTimeout(() => toast.remove(), 400);
+  });
+
+  // Auto-remove after 6s
+  setTimeout(() => {
+    toast.classList.remove('reservation-toast--visible');
+    setTimeout(() => toast.remove(), 400);
+  }, 6000);
+}
+
+// ── Reservation form submission (with EmailJS) ──
+async function handleFormSubmit(e) {
   e.preventDefault();
 
   const inputs = reservationForm.querySelectorAll('input, select, textarea');
@@ -256,21 +320,73 @@ function handleFormSubmit(e) {
     }
   });
 
-  if (isValid) {
-    const submitBtn    = reservationForm.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Reservation Requested!';
-    submitBtn.style.backgroundColor = '#4a9c6a';
-    submitBtn.disabled = true;
+  if (!isValid) return;
 
-    setTimeout(() => {
-      reservationForm.reset();
-      updateAvailableTimes();
-      submitBtn.textContent = originalText;
-      submitBtn.style.backgroundColor = '';
-      submitBtn.disabled = false;
-      updateAvailableTimes();
-    }, 3000);
+  const submitBtn    = reservationForm.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+
+  // Gather form data
+  const formData = {
+    guest_name:      document.getElementById('name').value.trim(),
+    guest_email:     document.getElementById('email').value.trim(),
+    guest_phone:     document.getElementById('phone').value.trim(),
+    guest_count:     document.getElementById('guests').value,
+    booking_date:    formatBookingDate(document.getElementById('date').value),
+    booking_time:    formatBookingTime(document.getElementById('time').value),
+    special_requests: document.getElementById('requests').value.trim() || 'None',
+    restaurant_name: 'The Lighthouse',
+    restaurant_phone: '(555) 123-4567',
+    restaurant_email: 'reservations@thelighthouse.com',
+  };
+
+  // Loading state
+  submitBtn.textContent = 'Sending…';
+  submitBtn.disabled = true;
+
+  // EmailJS not configured → graceful fallback (still shows success UX)
+  if (EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
+    console.warn('[EmailJS] Not configured — running in demo mode. Fill in EMAILJS_CONFIG in script.js.');
+    await new Promise(r => setTimeout(r, 1200));
+    showReservationToast('success', `Thank you, ${formData.guest_name}! We'll confirm your table for ${formData.guest_count} guest(s) on ${formData.booking_date} at ${formData.booking_time} within 24 hours.`);
+    reservationForm.reset();
+    updateAvailableTimes();
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+    return;
+  }
+
+  try {
+    // Send guest confirmation email
+    await emailjs.send(
+      EMAILJS_CONFIG.serviceId,
+      EMAILJS_CONFIG.guestTemplateId,
+      formData
+    );
+
+    // Send admin notification email
+    await emailjs.send(
+      EMAILJS_CONFIG.serviceId,
+      EMAILJS_CONFIG.adminTemplateId,
+      formData
+    );
+
+    showReservationToast(
+      'success',
+      `Thank you, ${formData.guest_name}! A confirmation has been sent to ${formData.guest_email}. We look forward to welcoming you on ${formData.booking_date} at ${formData.booking_time}.`
+    );
+
+    reservationForm.reset();
+    updateAvailableTimes();
+
+  } catch (err) {
+    console.error('[EmailJS] Error:', err);
+    showReservationToast(
+      'error',
+      'We couldn\'t send your confirmation email. Please call us at (555) 123-4567 or try again.'
+    );
+  } finally {
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
   }
 }
 
@@ -563,3 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 })();
+//template_Ido6xlg
+//admin-id - template_9padn1g
+//SDxz-_pGgtOMpjuNF - public key
+//service_gzi9gm2g 
