@@ -571,129 +571,46 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.textContent = isFavorite ? "\u2665" : "\u2661";
     });
 
-    renderCartItems();
-    renderFavoriteItems();
+// ─── Open / Closed Badge ────────────────────────────────────────────────────
+(function updateOpenStatusBadge() {
+  const sessions = [
+    { name: 'Breakfast', open: [7, 0],  close: [11, 0]  },
+    { name: 'Lunch',     open: [11, 30], close: [15, 0]  },
+    { name: 'Dinner',    open: [17, 0],  close: [23, 0]  },
+    { name: 'Bar',       open: [11, 0],  close: [24, 0]  },
+  ];
+
+  function getOpenSession() {
+    const now  = new Date();
+    const h    = now.getHours();
+    const m    = now.getMinutes();
+    const mins = h * 60 + m;
+    return sessions.find(s => {
+      const openMins  = s.open[0]  * 60 + s.open[1];
+      const closeMins = s.close[0] * 60 + s.close[1];
+      return mins >= openMins && mins < closeMins;
+    }) || null;
   }
 
-  function renderCartItems() {
-    if (!cartItemsEl) return;
-
-    cartItemsEl.innerHTML = "";
-    if (!cart.length) {
-      cartItemsEl.innerHTML = '<p class="order-empty">Your cart is empty.</p>';
-      return;
+  function render() {
+    const badge = document.getElementById('open-status-badge');
+    if (!badge) return;
+    const session = getOpenSession();
+    if (session) {
+      badge.className = 'status-badge status-badge--open';
+      badge.textContent = `Open — ${session.name}`;
+    } else {
+      badge.className = 'status-badge status-badge--closed';
+      badge.textContent = 'Closed';
     }
-
-    cart.forEach((item) => {
-      const row = document.createElement("div");
-      row.className = "order-item";
-      row.innerHTML = `
-        <div>
-          <strong></strong>
-          <span>\u20B9${item.price} each</span>
-        </div>
-        <div class="qty-control">
-          <button type="button" data-action="decrease">-</button>
-          <span>${item.qty}</span>
-          <button type="button" data-action="increase">+</button>
-        </div>
-      `;
-
-      row.querySelector("strong").textContent = item.title;
-      row.querySelector('[data-action="decrease"]').addEventListener("click", () => updateCartQty(item.id, -1));
-      row.querySelector('[data-action="increase"]').addEventListener("click", () => updateCartQty(item.id, 1));
-      cartItemsEl.appendChild(row);
-    });
   }
 
-  function renderFavoriteItems() {
-    if (!favoriteItemsEl) return;
+  render();
+  // Re-evaluate every minute so the badge stays accurate without a reload
+  setInterval(render, 60 * 1000);
+})();
 
-    favoriteItemsEl.innerHTML = "";
-    if (!favorites.length) {
-      favoriteItemsEl.innerHTML = '<p class="order-empty">No favourites yet.</p>';
-      return;
-    }
 
-    favorites.forEach((item) => {
-      const row = document.createElement("div");
-      row.className = "order-item";
-      row.innerHTML = `
-        <div>
-          <strong></strong>
-          <span>\u20B9${item.price}</span>
-        </div>
-        <button class="mini-add-btn" type="button">Add</button>
-      `;
-
-      row.querySelector("strong").textContent = item.title;
-      row.querySelector(".mini-add-btn").addEventListener("click", () => addToCart(item));
-      favoriteItemsEl.appendChild(row);
-    });
-  }
-
-  function initSkeletonLoaders() {
-    document.querySelectorAll(".food-card img, .hero-bg img, .about-image img, .reservation-bg img").forEach((img) => {
-      img.classList.add("image-hidden");
-
-      const revealImage = () => {
-        img.classList.remove("image-hidden");
-        img.classList.add("image-loaded");
-      };
-
-      if (img.complete && img.naturalWidth > 0) {
-        revealImage();
-      } else {
-        img.addEventListener("load", revealImage, { once: true });
-        img.addEventListener("error", revealImage, { once: true });
-      }
-    });
-  }
-
-  setReservationDateRange();
-  updateAvailableTimes();
-  setupThemeToggle();
-  setupIntersectionObserver();
-  setupAutoScroll();
-  setupReviews();
-  setupOrderFeatures();
-  initSkeletonLoaders();
-  filterMenuItems();
-  handleScroll();
-
-  dateInput?.addEventListener("change", updateAvailableTimes);
-  navToggle?.addEventListener("click", toggleMobileMenu);
-  reservationForm?.addEventListener("submit", validateReservationForm);
-  window.addEventListener("scroll", handleScroll, { passive: true });
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 768) closeMobileMenu();
-  });
-
-  navLinks.forEach((link) => link.addEventListener("click", smoothScroll));
-  document.querySelectorAll(".nav-cta, .nav-cta-mobile, .hero-buttons a").forEach((link) => {
-    link.addEventListener("click", smoothScroll);
-  });
-
-  filterBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      filterBtns.forEach((item) => item.classList.remove("active"));
-      btn.classList.add("active");
-      currentCategory = btn.dataset.filter || "all";
-      filterMenuItems();
-    });
-  });
-
-  dietBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      dietBtns.forEach((item) => item.classList.remove("active"));
-      btn.classList.add("active");
-      currentDiet = btn.dataset.diet || "all";
-      filterMenuItems();
-    });
-  });
-
-  cuisineDropdown?.addEventListener("change", filterMenuItems);
-  menuSearch?.addEventListener("input", filterMenuItems);
 
   backToTopBtn?.addEventListener("click", () => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
