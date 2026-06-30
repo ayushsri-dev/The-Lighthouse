@@ -54,6 +54,17 @@ document.addEventListener("DOMContentLoaded", () => {
     dateInput.max = maxDate.toISOString().split("T")[0];
   }
 
+  // Theme Toggle & Background Update Logic
+  function updateThemeImages(isLight) {
+    const heroImg = document.querySelector("#heroBg img");
+    const resImg = document.querySelector("#reservationBg img");
+    const lightImg = "./images/hero-restaurant-daytime.png";
+    const darkImg = "./images/hero-restaurant.jpg";
+    
+    if (heroImg) heroImg.src = isLight ? lightImg : darkImg;
+    if (resImg) resImg.src = isLight ? lightImg : darkImg;
+  }
+
   function updateAvailableTimes() {
     if (!dateInput || !timeSelect) return;
 
@@ -190,13 +201,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!themeToggle) return;
 
     const savedTheme = localStorage.getItem("theme");
-    document.body.classList.toggle("light-theme", savedTheme === "light");
-    themeToggle.textContent = savedTheme === "light" ? "\u2600" : "\u263E";
+    const isLightOnLoad = savedTheme === "light";
+    
+    document.body.classList.toggle("light-theme", isLightOnLoad);
+    themeToggle.textContent = isLightOnLoad ? "\u2600" : "\u263E";
+    
+    // Set correct images on initial load
+    updateThemeImages(isLightOnLoad);
 
     themeToggle.addEventListener("click", () => {
       const isLight = document.body.classList.toggle("light-theme");
       localStorage.setItem("theme", isLight ? "light" : "dark");
       themeToggle.textContent = isLight ? "\u2600" : "\u263E";
+      
+      // Swap daytime/nighttime images dynamically
+      updateThemeImages(isLight);
     });
   }
 
@@ -593,3 +612,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+  backToTopBtn?.addEventListener("click", () => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
+  });
+});
