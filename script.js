@@ -21,27 +21,26 @@ const menuPanels = document.querySelectorAll(".menu-panel");
 
 // ── Device detection ───
 const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-<<<<<<< HEAD
+
 
 // ── DOM ELEMENTS ──
-const nav            = document.getElementById('nav');
-const navToggle      = document.getElementById('navToggle');
-const navMenu        = document.getElementById('navMenu');
-const navLinks       = document.querySelectorAll('.nav-link');
-const heroBg         = document.getElementById('heroBg');
-const reservationBg  = document.getElementById('reservationBg');
-const reservationForm= document.getElementById('reservationForm');
-const dateInput      = document.getElementById('date');
-const timeSelect     = document.getElementById('time');
-const themeToggle    = document.getElementById('themeToggle');
-=======
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
+const nav = document.getElementById('nav');
+const navToggle = document.getElementById('navToggle');
+const navMenu = document.getElementById('navMenu');
+const navLinks = document.querySelectorAll('.nav-link');
+const heroBg = document.getElementById('heroBg');
+const reservationBg = document.getElementById('reservationBg');
+const reservationForm = document.getElementById('reservationForm');
+const dateInput = document.getElementById('date');
+const timeSelect = document.getElementById('time');
+const themeToggle = document.getElementById('themeToggle');
+
 
 // ── EmailJS Configuration ──
 // Replace these with your actual EmailJS credentials
 const EMAILJS_CONFIG = {
-  publicKey:       'abc123XYZ',        // actual public key
-  serviceId:       'service_abc1234',  //  actual service ID
+  publicKey: 'abc123XYZ',        // actual public key
+  serviceId: 'service_abc1234',  //  actual service ID
   guestTemplateId: 'template_guest01', //  template ID
   adminTemplateId: 'template_admin02', // template ID
 };
@@ -71,11 +70,9 @@ if (dateInput) {
   dateInput.addEventListener('change', updateAvailableTimes);
 }
 
-<<<<<<< HEAD
+
 // ── FIX #11 — Disable past time slots when today is selected ──
-=======
-// ── FIX #11 — Disable past time slots when today is selected ─────
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
+
 function updateAvailableTimes() {
   if (!dateInput || !timeSelect) return;
 
@@ -113,11 +110,10 @@ function handleScroll() {
 
   nav.classList.toggle('scrolled', currentScroll > 50);
 
-<<<<<<< HEAD
+
   // FIX #14 — Parallax completely skipped on touch/iOS
-=======
-  // Parallax skipped on touch devices
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
+
+
   if (!isTouchDevice) {
     if (heroBg) {
       heroBg.style.transform = `translateY(${currentScroll * 0.5}px)`;
@@ -166,7 +162,6 @@ function closeMobileMenu() {
   document.body.style.overflow = '';
 }
 
-<<<<<<< HEAD
 // ── Menu tabs functionality ──
 function switchMenuTab(e) {
   const targetTab = e.target.dataset.tab;
@@ -202,76 +197,16 @@ function filterMenuItems(filter = 'all', searchText = '', diet = 'all') {
   let visibleCount = 0;
 
   menuItems.forEach((item) => {
-    const itemName      = item.querySelector('h3').textContent.toLowerCase();
-    const category      = item.dataset.category;
-    const type          = item.dataset.type;
+    const itemName = item.querySelector('h3').textContent.toLowerCase();
+    const category = item.dataset.category;
+    const type = item.dataset.type;
 
     const matchesSearch = itemName.includes(searchText.toLowerCase());
     const matchesFilter = filter === 'all' || category === filter;
-    const matchesDiet   = diet === 'all' || type === diet;
+    const matchesDiet = diet === 'all' || type === diet;
 
     if (matchesSearch && matchesFilter && matchesDiet) {
-=======
-// Menu tabs functionality
-function switchMenuTab(e) {
-  const targetTab = e.target.dataset.tab;
 
-  // Update tab buttons
-  menuTabs.forEach((tab) => {
-    tab.classList.remove("active");
-  });
-  e.target.classList.add("active");
-
-  // Update panels
-  menuPanels.forEach((panel) => {
-    panel.classList.remove("active");
-    if (panel.id === targetTab) {
-      panel.classList.add("active");
-    }
-  });
-}
-
-//
-// Theme Toggle
-const savedTheme = localStorage.getItem("theme");
-
-if (savedTheme === "light") {
-  document.body.classList.add("light-theme");
-  themeToggle.textContent = "☀️";
-} else {
-  themeToggle.textContent = "🌙";
-}
-
-themeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("light-theme");
-
-  const isLight = document.body.classList.contains("light-theme");
-
-  if (isLight) {
-    localStorage.setItem("theme", "light");
-    themeToggle.textContent = "☀️";
-  } else {
-    localStorage.setItem("theme", "dark");
-    themeToggle.textContent = "🌙";
-  }
-});
-
-// ── Menu Search and Filter ─────────────────────────
-
-// FIX #1 — Use the correct parameter names (timeFilter, cuisineFilter) instead of undefined 'filter'
-function filterMenuItems(timeFilter, cuisineFilter, searchText) {
-  const menuItems = document.querySelectorAll(".menu-item");
-  let visibleCount = 0;
-
-  menuItems.forEach((item) => {
-    const itemName = item.querySelector('h3')?.textContent?.toLowerCase() || '';
-    const category = item.dataset.category;
-    const matchesSearch = !searchText || itemName.includes(searchText.toLowerCase());
-    const matchesTime = timeFilter === 'all' || category === timeFilter;
-    const matchesCuisine = !cuisineFilter || cuisineFilter === 'all' || item.dataset.cuisine === cuisineFilter;
-
-    if (matchesSearch && matchesTime && matchesCuisine) {
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
       item.classList.remove('hidden-item');
       visibleCount++;
     } else {
@@ -298,7 +233,7 @@ function triggerFilter() {
   const timeFilter = activeBtn ? activeBtn.dataset.filter : "all";
   const cuisineFilter = cuisineDropdown ? cuisineDropdown.value : "all";
   const searchText = menuSearch ? menuSearch.value : "";
-  
+
   filterMenuItems(timeFilter, cuisineFilter, searchText);
 }
 
@@ -312,7 +247,7 @@ if (menuSearch) {
 
 // Filter buttons
 filterBtns.forEach((btn) => {
-<<<<<<< HEAD
+
   btn.addEventListener('click', () => {
     filterBtns.forEach((b) => b.classList.remove('active'));
     btn.classList.add('active');
@@ -338,20 +273,7 @@ dietBtns.forEach((btn) => {
 });
 
 // ── Smooth scroll ──
-=======
-  btn.addEventListener("click", () => {
-    filterBtns.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    triggerFilter();
-  });
-});
 
-// FIX #2 — Removed duplicate menuSearch 'input' listener (was calling filterMenuItems with wrong/missing args)
-
- 
-
-// Smooth scroll for navigation links
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
 function smoothScroll(e) {
   e.preventDefault();
   const targetId = this.getAttribute('href');
@@ -422,11 +344,8 @@ async function handleFormSubmit(e) {
   e.preventDefault();
 
   const inputs = reservationForm.querySelectorAll('input, select, textarea');
-<<<<<<< HEAD
-  let isValid  = true;
-=======
+
   let isValid = true;
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
 
   inputs.forEach((input) => {
     if (input.required && !input.value) {
@@ -437,20 +356,20 @@ async function handleFormSubmit(e) {
     }
   });
 
-<<<<<<< HEAD
+
   if (!isValid) return;
 
-  const submitBtn    = reservationForm.querySelector('button[type="submit"]');
+  const submitBtn = reservationForm.querySelector('button[type="submit"]');
   const originalText = submitBtn.textContent;
 
   // Gather form data
   const formData = {
-    guest_name:      document.getElementById('name').value.trim(),
-    guest_email:     document.getElementById('email').value.trim(),
-    guest_phone:     document.getElementById('phone').value.trim(),
-    guest_count:     document.getElementById('guests').value,
-    booking_date:    formatBookingDate(document.getElementById('date').value),
-    booking_time:    formatBookingTime(document.getElementById('time').value),
+    guest_name: document.getElementById('name').value.trim(),
+    guest_email: document.getElementById('email').value.trim(),
+    guest_phone: document.getElementById('phone').value.trim(),
+    guest_count: document.getElementById('guests').value,
+    booking_date: formatBookingDate(document.getElementById('date').value),
+    booking_time: formatBookingTime(document.getElementById('time').value),
     special_requests: document.getElementById('requests').value.trim() || 'None',
     restaurant_name: 'The Lighthouse',
     restaurant_phone: '(555) 123-4567',
@@ -509,58 +428,7 @@ async function handleFormSubmit(e) {
 }
 
 // ── FIX #15 — Intersection Observer with prefers-reduced-motion ──
-=======
-  const emailInput = document.getElementById('email');
-  const phoneInput = document.getElementById('phone');
 
-  // Remove old error messages
-  document.querySelectorAll('.error-message').forEach(el => el.remove());
-
-  // Email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (emailInput && !emailRegex.test(emailInput.value.trim())) {
-    emailInput.style.borderColor = '#c94a4a';
-    const emailError = document.createElement('small');
-    emailError.className = 'error-message';
-    emailError.style.color = '#c94a4a';
-    emailError.textContent = i18next.t('reservation.email_error');
-    emailInput.parentElement.appendChild(emailError);
-    isValid = false;
-  }
-
-  // Phone validation
-  if (phoneInput) {
-    const phoneValue = phoneInput.value.replace(/\D/g, '');
-    if (phoneValue.length !== 10) {
-      phoneInput.style.borderColor = '#c94a4a';
-      const phoneError = document.createElement('small');
-      phoneError.className = 'error-message';
-      phoneError.style.color = '#c94a4a';
-      phoneError.textContent = i18next.t('reservation.phone_error');
-      phoneInput.parentElement.appendChild(phoneError);
-      isValid = false;
-    }
-  }
-
-  if (isValid) {
-    const submitBtn = reservationForm.querySelector('button[type="submit"]');
-    submitBtn.textContent = i18next.t('reservation.submit_requested');
-    submitBtn.style.backgroundColor = '#4a9c6a';
-    submitBtn.disabled = true;
-
-    setTimeout(() => {
-      reservationForm.reset();
-      updateAvailableTimes();
-      submitBtn.textContent = i18next.t('reservation.submit');
-      submitBtn.style.backgroundColor = '';
-      submitBtn.disabled = false;
-      updateAvailableTimes();
-    }, 3000);
-  }
-}
-
-// ── Intersection Observer with prefers-reduced-motion ──────
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
 function setupIntersectionObserver() {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -812,7 +680,7 @@ if (reviewForm) {
   });
 }
 
-<<<<<<< HEAD
+
 // ── Initialise ──
 document.addEventListener('DOMContentLoaded', () => {
   handleScroll();
@@ -822,10 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Veg / Non-Veg Filter ──
-=======
-// ── Veg / Non-Veg Filter ──────────────────────────────
-// 1. Your filtering function, contained properly
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
+
 (function () {
   const dietFilterBtns = document.querySelectorAll('.diet-btn');
   if (!dietFilterBtns.length) return;
@@ -858,37 +723,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-<<<<<<< HEAD
+
   dietFilterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       dietFilterBtns.forEach(b => b.classList.remove('active'));
-=======
-  dietFilterBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      dietFilterBtns.forEach((b) => b.classList.remove('active'));
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
+
+
       btn.classList.add('active');
       applyDietFilter(btn.dataset.diet);
     });
   });
 
-<<<<<<< HEAD
   document.querySelectorAll('.menu-tab').forEach(tab => {
-=======
-  document.querySelectorAll('.menu-tab').forEach((tab) => {
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
+
     tab.addEventListener('click', () => {
       const activeDiet = document.querySelector('.diet-btn.active')?.dataset.diet || 'all';
       setTimeout(() => applyDietFilter(activeDiet), 50);
     });
   });
 })();
-<<<<<<< HEAD
-//template_Ido6xlg
-//admin-id - template_9padn1g
-//SDxz-_pGgtOMpjuNF - public key
-//service_gzi9gm2g 
-=======
+
 
 // =============================================
 // 3D CARD FLIP ENHANCEMENTS
@@ -920,7 +774,7 @@ document.addEventListener('click', function (e) {
 // Translate UI Content
 function updateContent() {
   if (typeof i18next === 'undefined' || !i18next.t) return;
-  
+
   // Translate standard data-i18n elements
   document.querySelectorAll("[data-i18n]").forEach((elem) => {
     const key = elem.getAttribute("data-i18n");
@@ -1023,4 +877,4 @@ const currentYear = document.getElementById("current-year");
 if (currentYear) {
   currentYear.textContent = new Date().getFullYear();
 }
->>>>>>> 46abbe531568d6a4944880e4df703b40c06b71c6
+
